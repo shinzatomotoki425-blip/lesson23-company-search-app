@@ -55,7 +55,10 @@ SUPPORTED_EXTENSIONS = {
 WEB_URL_LOAD_TARGETS = [
     "https://generative-ai.web-camp.io/"
 ]
-
+# RAG関連の設定
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 50
+RETRIEVER_TOP_K = 5
 
 # ==========================================
 # プロンプトテンプレート
