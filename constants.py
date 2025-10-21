@@ -57,8 +57,8 @@ WEB_URL_LOAD_TARGETS = [
     "https://generative-ai.web-camp.io/"
 ]
 # RAG関連の設定
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 50
+CHUNK_SIZE = 3000  # 社員名簿のような長いドキュメントに対応
+CHUNK_OVERLAP = 100
 RETRIEVER_TOP_K = 5
 
 # ==========================================

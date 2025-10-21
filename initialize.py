@@ -217,7 +217,46 @@ def file_load(path, docs_all):
         # ファイルの拡張子に合ったdata loaderを使ってデータ読み込み
         loader = ct.SUPPORTED_EXTENSIONS[file_extension](path)
         docs = loader.load()
-        docs_all.extend(docs)
+        
+        # CSVファイルで、かつ「社員名簿.csv」の場合、特別処理
+        if file_extension == ".csv" and "社員名簿" in file_name:
+            # 部署ごとにドキュメントを分割
+            from langchain.schema import Document
+            
+            # 部署ごとにデータをグループ化
+            dept_groups = {}
+            for doc in docs:
+                content = doc.page_content
+                # 部署名を抽出（CSVの9列目が部署）
+                if "人事部" in content:
+                    dept = "人事部"
+                elif "営業部" in content:
+                    dept = "営業部"
+                elif "総務部" in content:
+                    dept = "総務部"
+                elif "経理部" in content:
+                    dept = "経理部"
+                elif "IT部" in content:
+                    dept = "IT部"
+                elif "マーケティング部" in content:
+                    dept = "マーケティング部"
+                else:
+                    dept = "その他"
+                
+                if dept not in dept_groups:
+                    dept_groups[dept] = []
+                dept_groups[dept].append(content)
+            
+            # 部署ごとにドキュメントを作成
+            for dept, contents in dept_groups.items():
+                header = f"【{dept}所属の従業員一覧】\n\n"
+                combined_content = header + "\n".join(contents)
+                combined_metadata = {"source": path, "department": dept}
+                combined_doc = Document(page_content=combined_content, metadata=combined_metadata)
+                docs_all.append(combined_doc)
+        else:
+            # 通常のファイルはそのまま追加
+            docs_all.extend(docs)
 
 
 def adjust_string(s):
